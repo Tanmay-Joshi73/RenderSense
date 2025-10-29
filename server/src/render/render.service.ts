@@ -1,142 +1,86 @@
-import { Injectable } from '@nestjs/common';
-// import { CreateRenderDto } from './dto/create-render.dto';
-// import { UpdateRenderDto } from './dto/update-render.dto';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import axios from 'axios';
-import { log } from 'node:console';
+import axios, { AxiosRequestConfig } from 'axios';
 
-const InActive:Array<Object>=[]
-const Active:Array<Object>=[]
 @Injectable()
 export class RenderService {
-  private readonly  baseurl:string;
-  private readonly  key:string;
-  constructor(private readonly Env:ConfigService){
-    this.baseurl=this.Env.get<string>('Render_EndPoint')!
-    this.key=this.Env.get<string>('Render_Key')!
+  private readonly baseUrl: string;
+  private readonly apiKey: string;
+
+  constructor(private readonly config: ConfigService) {
+    this.baseUrl = this.config.get<string>('Render_EndPoint')!;
+    this.apiKey = this.config.get<string>('Render_Key')!;
   }
 
-  async ListAll(): Promise<any> {
-  
-    
-    const response = await axios.get(`${this.baseurl}/services`, {
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${this.key}`
-      }
-    });
-    const Result=response.data;
-    Result.map((item:any)=>{
-      
-      if(item.service.suspended==='not_suspended'){
-        Active.push(item);
-      }
-      else{
-        console.log(`${item.service.name} is suspended`);
-        InActive.push(item)
-      }
-    })
-    return response.data
-  }
-
-  
-  async ListDeployment():Promise<any>{
-   try {
-
-      
-      const response = await axios.get(`${this.baseurl}/services/`, {
+  /**
+   * Private helper to make authorized requests to Render API.
+   */
+  private async makeRequest<T>(endpoint: string, config: AxiosRequestConfig = {}): Promise<T> {
+    try {
+      const response = await axios({
+        url: `${this.baseUrl}${endpoint}`,
         headers: {
-          accept: 'application/json',
-          authorization: `Bearer ${this.key}`,
+          Accept: 'application/json',
+          Authorization: `Bearer ${this.apiKey}`,
         },
+        ...config,
       });
-      
-      
-      
-      
-      return response.data; // array of all your services
-    } catch (error) {
-      console.error('Error fetching services:', error.response?.data || error.message);
-      throw error;
+      return response.data;
+    } catch (error: any) {
+      console.error(`Render API error (${endpoint}):`, error.response?.data || error.message);
+      throw new InternalServerErrorException('Error communicating with Render API');
     }
   }
-  
-  async  getEnvGroups():Promise<any> {
-  const url = `${this.baseurl}/env-groups?limit=20`;
 
-  try {
-    const response = await axios.get(url, {
-      headers: {
-        accept: 'application/json',
-        authorization: `Bearer ${this.key}`,
-      },
-    });
-
-    console.log('Environment Groups:');
-    console.log(response.data); // Array of environment groups
-  } catch (error) {
-    console.error('Error fetching environment groups:', error.response?.data || error.message);
+  /**
+   * Fetch all services (active + inactive)
+   */
+  async getAllServices(): Promise<any[]> {
+    return await this.makeRequest<any[]>('/services');
   }
-}
 
-///this will return the Currenly Active Render Service
-async Active():Promise<Array<Object>>{
-  console.log("This active function perfectly works");
-  
-  const ActiveNow:Array<Object>=[];
-
-  const response = await axios.get(`${this.baseurl}/services`, {
-      headers: {
-        'Accept': 'application/json',
-        'Authorization': `Bearer ${this.key}`
-      }
-    });
- 
-  
-  
-    const Result=response.data;
-     Result.map((item:any)=>{
-      
-      if(item.service.suspended==='not_suspended'){
-     
-        
-        Active.push(item);
-
-      }
-      else{
-        console.log(`${item.service.name} is suspended`);
-        InActive.push(item)
-      }
-    })
-   
-    Result.map((item:any)=>{
-      
-      if(item.service.suspended==='not_suspended'){
-        ActiveNow.push(item);
-      }
-     
-    })
-    return ActiveNow;
-
-}
-
-//This will return the matrices of the avalible services //this required the paid plan
-async  getMetrics():Promise<any> {
-  try {
-    const response = await axios.get(
-      'https://api.render.com/v1/metrics-stream/tea-csprora3esus739p0qu0',
-      {
-        headers: {
-          accept: 'application/json',
-          authorization: 'Bearer rnd_c0V4bGW8YXk3GtxfqTyBfc1QPOKN',
-        },
-      }
-    );
-
-    console.log('Metrics Data:', response.data);
-  } catch (error) {
-    console.error('Error fetching metrics:', error.response?.data || error.message);
+  /**
+   * Fetch only active (non-suspended) services
+   */
+  async getActiveServices(): Promise<any[]> {
+    const services = await this.getAllServices();
+    return services.filter((item: any) => item.service.suspended === 'not_suspended');
   }
-}
 
+  /**
+   * Fetch only inactive (suspended) services
+   */
+  async getInactiveServices(): Promise<any[]> {
+    const services = await this.getAllServices();
+    return services.filter((item: any) => item.service.suspended !== 'not_suspended');
+  }
+
+  /**
+   * Fetch a specific service by its ID
+   */
+  async getServiceById(serviceId: string): Promise<any> {
+    return await this.makeRequest<any>(`/services/${serviceId}`);
+  }
+
+  /**
+   * Fetch all environment groups (for deployment configs)
+   */
+  async getEnvironmentGroups(limit = 20): Promise<any[]> {
+    const data = await this.makeRequest<any>(`/env-groups?limit=${limit}`);
+    return data;
+  }
+
+  /**
+   * Fetch all deployments (recent deployments of services)
+   */
+  async getDeployments(): Promise<any[]> {
+    return await this.makeRequest<any[]>('/services/');
+  }
+
+  /**
+   * Fetch metrics of a specific service (if your Render plan supports it)
+   */
+  async getServiceMetrics(serviceId: string): Promise<any> {
+    return await this.makeRequest<any>(`/metrics-stream/${serviceId}`);
+  }
 }
