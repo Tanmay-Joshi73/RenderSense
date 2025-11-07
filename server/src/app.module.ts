@@ -14,6 +14,7 @@ import { UserModule } from './user/user.module';
     isGlobal:true,
     envFilePath:'.env'
   }),
+  
 TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',      // DB host
