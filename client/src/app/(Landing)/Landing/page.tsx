@@ -55,6 +55,14 @@ const LandingPage = () => {
             <a href="#how-it-works" className="hover:text-cyan-400 transition">How It Works</a>
             <a href="#tech-stack" className="hover:text-cyan-400 transition">Tech Stack</a>
             <a href="#about" className="hover:text-cyan-400 transition">About</a>
+             <button
+        className="bg-cyan-500 text-white px-4 py-2 rounded-xl hover:bg-cyan-400 transition"
+        onClick={function(){
+                  route.push('/auth')
+        }}
+      >
+        Get Started
+      </button>
           </div>
         </div>
       </motion.nav>
