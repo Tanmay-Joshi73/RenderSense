@@ -47,17 +47,18 @@ try {
   const response = await axios.post(endpoint, payload, {
     headers: { 'Content-Type': 'application/json' },
   });
-  console.log(response)
-  console.log(response.status);
+ 
   
 
   console.log('✅ Success:', response.data);
 
   if (isLogin) {
     alert(`Welcome back, ${response.data.Name || response.data.Email}!`);
+    route.push('/Dash')
   } else {
     alert('Account created successfully!');
     setIsLogin(true);
+    route.push('/Dash')
   }
 } catch (err: any) {
   console.error('❌ Error:', err);
