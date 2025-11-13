@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body ,Delete,Patch,Put} from '@nestjs/common';
 import { UserService } from './user.service';
 import { log } from 'console';
 import { UserCreationDto } from 'src/DTO/userCreation.dto';
+
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -12,9 +13,10 @@ export class UserController {
   }
 
   @Post('/create')
-  create(@Body() userinfo: UserCreationDto) {
+  create(@Body() userinfo: UserCreationDto):any{
     const { Name, Email, Password } = userinfo;
-    return this.userService.createUser(Name, Email, Password);
+    const response=this.userService.createUser(Name, Email, Password);
+    return response
   }
 
   @Post('/login')

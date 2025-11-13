@@ -1,30 +1,49 @@
 import { Injectable } from "@nestjs/common";
 import { BadRequestException,NotFoundException,UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { user } from "./user.entity";
+import { User } from "./user.entity";
 import { Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { randomBytes } from "crypto";
+import { ResponseResult } from 'src/Interfaces/Response.interface';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(user)
-    private userRepository: Repository<user>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
- findAll(): Promise<user[]> {
+ findAll(): Promise<User[]> {
     return this.userRepository.find();
   }
 
   // ✅ Create a new user (hashed password)
-  async createUser(Name: string, Email: string, Password: string): Promise<user> {
+  async createUser(Name: string, Email: string, Password: string): Promise<ResponseResult> {
+    try{
     const existingUser = await this.userRepository.findOne({ where: { Email } });
     if (existingUser) throw new BadRequestException("User already exists with this email");
 
     const hashedPassword = await this.hashPassword(Password);
     const newUser = this.userRepository.create({ Name, Email, Password: hashedPassword });
-    return this.userRepository.save(newUser);
+    const user=await this.userRepository.save(newUser);
+    return {
+      Status:'Success',
+      Success:true,
+      Message:"Account Created Successfully",
+      Result:{
+        Email:Email
+      }
+    }
   }
+  catch(err){
+    console.log(err)
+  }
+    return {
+      Status:'Failed',
+      Success:false,
+      Message:"Account is failed to create",
+    }
+}
 
   // ✅ Hash password
   async hashPassword(password: string): Promise<string> {
@@ -39,20 +58,36 @@ export class UserService {
   }
 
   // ✅ Find by email
-  async findByEmail(email: string): Promise<user | null> {
+  async findByEmail(email: string): Promise<User | null> {
     return this.userRepository.findOne({ where: { Email: email } });
   }
 
   // ✅ Login user
-  async login(email: string, password: string): Promise<user> {
+  async login(email: string, password: string): Promise<ResponseResult> {
+    try{
     const user = await this.findByEmail(email);
     if (!user) throw new NotFoundException("User not found");
 
     const isMatch = await this.comparePassword(password, user.Password);
     if (!isMatch) throw new UnauthorizedException("Invalid credentials");
-
-    // You can later add JWT token generation here
-    return user;
+     return {
+      Status:'Success',
+      Success:true,
+      Message:"Account is failed to create",
+      Result:{
+        Data:email
+      }
+    }
+    
+    }
+    catch(err){
+      console.log(err)
+    }
+     return {
+      Status:'Failed',
+      Success:false,
+      Message:"Account is failed to create",
+    }
   }
 
   // ✅ Change password
@@ -91,7 +126,7 @@ export class UserService {
   }
 
   // ✅ Update user name or email
-  async updateUser(email: string, newName?: string, newEmail?: string): Promise<user> {
+  async updateUser(email: string, newName?: string, newEmail?: string): Promise<User> {
     const user = await this.findByEmail(email);
     if (!user) throw new NotFoundException("User not found");
 
@@ -102,7 +137,7 @@ export class UserService {
   }
 
   // ✅ Get user profile
-  async getProfile(email: string): Promise<user> {
+  async getProfile(email: string): Promise<User> {
     const user = await this.findByEmail(email);
     if (!user) throw new NotFoundException("User not found");
     return user;

@@ -5,15 +5,18 @@ interface SetApi{
     Message:string,
     Error?:string;
 }
-export const Saveapikey=async(Key:string):Promise<any>=>
+export const Saveapikey=async(Key:string,email:string):Promise<any>=>
 {
+
+    console.log(`email is ${email}`)
     console.log("hey this function has been worked and called ")
     console.log(Key);
     
     const BackendUrl='http://localhost:5000/api-keys/set'
     const response=await axios.post(BackendUrl,{
         Body:{
-            apiKey:Key
+            apiKey:Key,
+            email:email
         }
     }
 )

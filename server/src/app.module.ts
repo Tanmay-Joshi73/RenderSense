@@ -8,7 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { ApiKeysModule } from './api-keys/api-keys.module';
-
+import { User } from './user/user.entity';
+import { ApiKey } from './api-keys/apiKey.entity';
 @Module({
   imports: [
   ConfigModule.forRoot({
@@ -23,6 +24,7 @@ TypeOrmModule.forRoot({
       username: 'postgres',   // Your username
       password: 'T@nM@yJoShI73', // Your password
       database: 'postgres',       // Your database name
+      entities: [User, ApiKey],
       autoLoadEntities: true, // Automatically loads entities registered through TypeOrmModule.forFeature()
       synchronize: true,
 }),

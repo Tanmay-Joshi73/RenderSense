@@ -4,10 +4,12 @@ import { motion } from 'framer-motion';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { Activity, Mail, User, Lock, ArrowRight, ArrowLeft } from 'lucide-react';
+import { useEmailStore } from '@/app/Store/storeEmail';
 import { log } from 'console';
  const baseURL = 'http://localhost:5000/users';
 const AuthPages = () => {
   const route=useRouter();
+  const {setEmail}=useEmailStore()
   const [isLogin, setIsLogin] = useState(true);
   const [formData, setFormData] = useState({
     email: '',
@@ -48,12 +50,16 @@ try {
     headers: { 'Content-Type': 'application/json' },
   });
  
+ 
+    
+  if(response.data.Success){
+    setEmail(formData.email)
+    }
   
 
-  console.log('✅ Success:', response.data);
-
   if (isLogin) {
-    alert(`Welcome back, ${response.data.Name || response.data.Email}!`);
+    alert(`Welcome back, ${response.data.Name || response.data.Result.Email}!`);
+    
     route.push('/Dash')
   } else {
     alert('Account created successfully!');

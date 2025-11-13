@@ -1,9 +1,9 @@
 import { IsString } from "class-validator";
 export class RenderKey{
     @IsString()
-    id:string;
+    apiKey:string
     @IsString()
-    Name:string;
+    email:string;
     
 
 }
