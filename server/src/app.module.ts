@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
+import { ApiKeysModule } from './api-keys/api-keys.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ TypeOrmModule.forRoot({
 
   
   AuthModule,
-  UserModule
+  UserModule,
+  ApiKeysModule
   ],
   controllers: [AppController],
   providers: [AppService],
