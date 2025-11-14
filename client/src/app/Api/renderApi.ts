@@ -14,10 +14,10 @@ export const Saveapikey=async(Key:string,email:string):Promise<any>=>
     
     const BackendUrl='http://localhost:5000/api-keys/set'
     const response=await axios.post(BackendUrl,{
-        Body:{
+     
             apiKey:Key,
             email:email
-        }
+        
     }
 )
 return response;

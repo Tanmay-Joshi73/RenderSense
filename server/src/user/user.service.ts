@@ -113,6 +113,11 @@ export class UserService {
     return "Account deleted successfully";
   }
 
+  async DeleteAll():Promise<any>{
+    await this.userRepository.deleteAll()
+    return "All the users are deleted"
+  }
+
   // ✅ Forget password (simulate token)
   async forgetPassword(email: string): Promise<string> {
     const user = await this.findByEmail(email);

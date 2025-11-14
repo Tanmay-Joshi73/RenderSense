@@ -34,6 +34,11 @@ export class UserController {
     return this.userService.deleteAccount(body.Email);
   }
 
+  @Delete('/DeleteAll')
+  async deleteAllAccount():Promise<void>{
+    await this.userService.DeleteAll()
+  }
+
   @Post('/forget-password')
   forgetPassword(@Body() body: { Email: string }) {
     return this.userService.forgetPassword(body.Email);

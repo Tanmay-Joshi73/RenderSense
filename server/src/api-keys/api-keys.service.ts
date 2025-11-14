@@ -5,7 +5,8 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserService } from 'src/user/user.service';
 import { ApiKey } from './apiKey.entity';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
+import { log } from 'console';
 @Injectable()
 export class ApiKeysService {
   constructor(private readonly user:UserService,
@@ -13,6 +14,9 @@ export class ApiKeysService {
         private userRepository: Repository<User>,
     @InjectRepository(ApiKey) private apiKeyRepo:Repository<ApiKey>
   ){}
+
+
+  /// This will insert the Render api key into the Db with Relations
   async InsertKey(Key:string,Email:string):Promise<any>{
     try{
        // 1️⃣ Find the user
@@ -20,13 +24,17 @@ export class ApiKeysService {
     where: { Email: Email },
     relations: ["ApiKey"],  // Important: load the user's existing key
   });
-
+  console.log(`Exising user is found`,existingUser)
+  console.log(Key);
+  
+  // return;
   if (!existingUser) {
     throw new Error("User not found");
   }
 
   // 2️⃣ If the user already has an API key → update it
   if (existingUser.ApiKey) {
+    console.log('Key is present',existingUser.ApiKey)
     existingUser.ApiKey.Key = Key;
     existingUser.ApiKey.UpdatedAt = new Date();
 
@@ -47,9 +55,6 @@ export class ApiKeysService {
           Message:"Api key set",
           Success:true
         }
-
-    
-        
       
     }
     catch(err){
@@ -61,5 +66,11 @@ export class ApiKeysService {
           Success:false
         }
  
+ }
+
+
+ async DeleteAllkeys():Promise<string>{ 
+ await this.apiKeyRepo.deleteAll();
+  return "All Render api keys are deleted"
  }
 }

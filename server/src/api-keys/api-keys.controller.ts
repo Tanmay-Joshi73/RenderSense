@@ -8,12 +8,17 @@ export class ApiKeysController {
   constructor(private readonly apiKeysService: ApiKeysService) {}
     @Post('/set')
     SetKey(@Body() RenderData:RenderKey):void{
-    const {apiKey,email}=RenderData
-     const Response=this.apiKeysService.InsertKey(apiKey,email)
+      console.log(RenderData)
+      const {apiKey,email}=RenderData;
+      const Response=this.apiKeysService.InsertKey(apiKey,email)
   }
   @Get()
   random():any{
     return "Random stuff"
+  }
+  @Delete()
+  DelteAll():any{
+    return this.apiKeysService.DeleteAllkeys()
   }
 
 }

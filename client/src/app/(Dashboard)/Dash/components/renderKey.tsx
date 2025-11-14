@@ -18,7 +18,8 @@ export const RenderKeys = () => {
  
   const handleSaveRenderKey = async (key:string) => {
   try {
-    const email=EmailStore.email || '';
+    const email=EmailStore.email || 'tanmayjoshi072@gmail.com';
+
     const result = await Saveapikey(key,email);
     console.log(result);
   } catch (error) {
