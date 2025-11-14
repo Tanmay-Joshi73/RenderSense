@@ -4,6 +4,7 @@ import { Check,Trash2,AlertCircle ,EyeOff,Eye,X} from "lucide-react";
 import { Saveapikey } from "@/app/Api/renderApi";
 import { useTheme } from '@/app/Context/ThemeContext';
 import { useEmailStore } from "@/app/Store/storeEmail";
+import { renderAPiStore } from "@/app/Store/storeApi";
 export const RenderKeys = () => {
      const { isDarkMode } = useTheme();
   const [renderKeyValid, setRenderKeyValid] = useState(null);
@@ -14,14 +15,17 @@ export const RenderKeys = () => {
   const [uptimeKeyValid, setUptimeKeyValid] = useState(null);
   const [uptimeFilter, setUptimeFilter] = useState('all');
   const EmailStore=useEmailStore();
-  
+  const RenderApi=renderAPiStore();
+''  
  
   const handleSaveRenderKey = async (key:string) => {
   try {
     const email=EmailStore.email || 'tanmayjoshi072@gmail.com';
 
     const result = await Saveapikey(key,email);
-    console.log(result);
+    if(result.data.Success){
+      RenderApi.setApi(key)   // Here api key is set for the further use
+    }
   } catch (error) {
     console.error(error);
   }

@@ -38,7 +38,12 @@ export class ApiKeysService {
     existingUser.ApiKey.Key = Key;
     existingUser.ApiKey.UpdatedAt = new Date();
 
-    return await this.apiKeyRepo.save(existingUser.ApiKey);
+    const apiKey=await this.apiKeyRepo.save(existingUser.ApiKey);
+     return{
+          Status:"Suceess",
+          Message:"Api key set",
+          Success:true
+        }
   }
 
   // 3️⃣ If no API key exists → create a new one

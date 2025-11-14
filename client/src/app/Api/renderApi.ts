@@ -17,9 +17,9 @@ export const Saveapikey=async(Key:string,email:string):Promise<any>=>
      
             apiKey:Key,
             email:email
-        
     }
 )
+console.log(response)
 return response;
 }
 
