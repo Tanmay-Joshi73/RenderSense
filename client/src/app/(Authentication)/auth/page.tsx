@@ -52,7 +52,11 @@ try {
  
  
     
+  
   if(response.data.Success){
+
+    const token=response.data.Result.token // this will be used to for protecting the route for further process
+    sessionStorage.setItem("token", token);
     setEmail(formData.email)
     }
   
@@ -65,6 +69,7 @@ try {
     alert('Account created successfully!');
     setIsLogin(true);
     route.push('/Dash')
+  
   }
 } catch (err: any) {
   console.error('❌ Error:', err);

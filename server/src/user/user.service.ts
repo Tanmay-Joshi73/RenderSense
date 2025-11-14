@@ -6,11 +6,13 @@ import { Repository } from "typeorm";
 import * as bcrypt from "bcrypt";
 import { randomBytes } from "crypto";
 import { ResponseResult } from 'src/Interfaces/Response.interface';
+import { JwtService } from "@nestjs/jwt";
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    private readonly JWT:JwtService
   ) {}
 
  findAll(): Promise<User[]> {
@@ -26,12 +28,14 @@ export class UserService {
     const hashedPassword = await this.hashPassword(Password);
     const newUser = this.userRepository.create({ Name, Email, Password: hashedPassword });
     const user=await this.userRepository.save(newUser);
+    const payload=this.JWT.sign({userId:user.Id,email:user.Email})
     return {
       Status:'Success',
       Success:true,
       Message:"Account Created Successfully",
       Result:{
-        Email:Email
+        Email:Email,
+        token:payload
       }
     }
   }
@@ -70,12 +74,15 @@ export class UserService {
 
     const isMatch = await this.comparePassword(password, user.Password);
     if (!isMatch) throw new UnauthorizedException("Invalid credentials");
+    const payload=this.JWT.sign({userId:user.Id,email:user.Email})
+
      return {
       Status:'Success',
       Success:true,
       Message:"Account is failed to create",
       Result:{
-        Data:email
+        Data:email,
+        token:payload
       }
     }
     

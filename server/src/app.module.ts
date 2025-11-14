@@ -9,8 +9,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { ApiKeysModule } from './api-keys/api-keys.module';
 import { User } from './user/user.entity';
-import { GraphQLModule } from '@nestjs/graphql';
-import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+// import { GraphQLModule } from '@nestjs/graphql';
+// import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApiKey } from './api-keys/apiKey.entity';
 import { RenderModule } from './render/render.module';
 import { application } from 'express';
@@ -41,11 +41,11 @@ TypeOrmModule.forRoot({
   UserModule,
   ApiKeysModule,
   RenderModule,
-  GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver:ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      playground: true,  // Enables GraphQL UI    
-  })
+  // GraphQLModule.forRoot<ApolloDriverConfig>({
+      // driver:ApolloDriver,
+      // autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      // playground: true,  // Enables GraphQL UI    
+  // })
   ],
   controllers: [AppController],
   providers: [AppService, TestResolver],
