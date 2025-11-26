@@ -12,10 +12,11 @@ import { User } from './user/user.entity';
 // import { GraphQLModule } from '@nestjs/graphql';
 // import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ApiKey } from './api-keys/apiKey.entity';
-import { RenderModule } from './render/render.module';
+// import { RenderModule } from './render/render.module';
 import { application } from 'express';
 import {join} from 'path'
 import { TestResolver } from './test/test.resolver';
+import { RenderModule } from './render/render.module';
 @Module({
   imports: [
   ConfigModule.forRoot({

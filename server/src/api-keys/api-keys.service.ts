@@ -7,20 +7,56 @@ import { UserService } from 'src/user/user.service';
 import { ApiKey } from './apiKey.entity';
 import { User } from '../user/user.entity';
 import { log } from 'console';
+import { validate } from 'graphql';
+import axios from 'axios';
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class ApiKeysService {
-  constructor(private readonly user:UserService,
+  constructor(private readonly user:UserService,private readonly Config:ConfigService,
      @InjectRepository(User)
         private userRepository: Repository<User>,
     @InjectRepository(ApiKey) private apiKeyRepo:Repository<ApiKey>
   ){}
 
 
-  /// This will insert the Render api key into the Db with Relations
+  async validateKey(key:string):Promise<any>{
+     try {
+      const key=this.Config.get<string>('Render_Key')
+      const response = await axios.get(
+        'https://api.render.com/v1/services',
+        {
+          headers: {
+            Authorization: `Bearer ${key}`,
+          },
+        }
+      );
+      // If API key is correct, we get 200 success
+      if(response.status === 200) return true
+    } catch (error) {
+      // If API key is wrong → 401 Unauthorized
+      console.log(error)
+      if (error.response && error.response.status === 401) {
+        return false;
+      }
+
+      // Other errors → rethrow
+     
+    }
+
+  }
+  
+
+    /// This will insert the Render api key into the Db with Relations
   async InsertKey(Key:string,Email:string):Promise<any>{
     try{
        // 1️⃣ Find the user
-  const existingUser = await this.userRepository.findOne({
+    const CorrectKey=await this.validateKey(Key);
+    if(!CorrectKey){
+      return {Status:false,
+              Message:"Invalid key"
+      }
+    }
+    const existingUser = await this.userRepository.findOne({
     where: { Email: Email },
     relations: ["ApiKey"],  // Important: load the user's existing key
   });
