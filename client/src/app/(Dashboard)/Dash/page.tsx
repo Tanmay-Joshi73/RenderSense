@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Activity, Server, Globe, TrendingUp, Key, FileText, Settings, RefreshCw, Sun, Moon, Play, StopCircle, Plus, Trash2, Eye, EyeOff, Check, X, AlertCircle } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { ListServices } from './components/ListServices';
+import ListServices from './components/ListServices';
 import { div } from 'framer-motion/client';
 import {RenderKeys} from './components/renderKey';
 // Mock Data
@@ -548,7 +548,7 @@ type Status = 'Running' | 'Building' | 'Crashed' | 'Up' | 'Down';
       
       <main className="ml-64 pt-16 p-8">
         {activeSection === 'overview' && renderOverview()}
-        {activeSection === 'render' && <ListServices />}   //This will be in the next file where for the perfect readibility
+        {activeSection === 'render' && <ListServices isDarkMode={isDarkMode} />}   //This will be in the next file where for the perfect readibility
         {/* {activeSection === 'uptime' && renderUptime()} */}
         {activeSection === 'performance' && renderPerformance()}
         {activeSection === 'keys' && <RenderKeys />}

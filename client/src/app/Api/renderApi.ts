@@ -1,5 +1,5 @@
 import axios from "axios"
-import { log } from "node:console";
+import { error, log } from "node:console";
 interface SetApi{
     Status:true,
     Message:string,
@@ -8,9 +8,6 @@ interface SetApi{
 export const Saveapikey=async(Key:string,email:string):Promise<any>=>
 {
 
-    console.log(`email is ${email}`)
-    console.log("hey this function has been worked and called ")
-    console.log(Key);
     
     const BackendUrl='http://localhost:5000/api-keys/set'
     const response=await axios.post(BackendUrl,{
@@ -22,6 +19,23 @@ export const Saveapikey=async(Key:string,email:string):Promise<any>=>
 console.log(response)
 return response;
 }
+export const LisAllServices=async(Key:string):Promise<any>=>{
+    try{
+            
+ const response = await axios.post(
+          'http://localhost:5000/render/getservices',
+          { key: Key }
+        );
+        console.log(response)
+        return response;
+    }
+    catch(err){
+        console.log(err)
+        throw err;
+    }
+}
+
+
 
 // export const Validate=async(Key:string):Promise<any>{
     // const Url:'';

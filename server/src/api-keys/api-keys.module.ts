@@ -12,6 +12,6 @@ import { User } from 'src/user/user.entity';
   ],
   controllers: [ApiKeysController],
   providers: [ApiKeysService],
-  exports:[TypeOrmModule]
+  exports:[TypeOrmModule,ApiKeysService]
 })
 export class ApiKeysModule {}
