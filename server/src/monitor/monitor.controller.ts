@@ -8,6 +8,8 @@ export class MonitorController {
   @Post('create')
   async create(@Body() body: { name: string; url: string; interval: number }) {
     console.log('this route is just working fine')
+    console.log(body)
+    
     return this.monitorService.createMonitor(body.name, body.url, body.interval);
   }
 

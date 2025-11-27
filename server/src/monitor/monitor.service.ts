@@ -17,6 +17,9 @@ export class MonitorService {
   // Create a new HTTP monitor
  async createMonitor(name: string, url: string, intervalMinutes: number) {
   try {
+    console.log("hey this function is working just fine ")
+    console.log(name,url,intervalMinutes)
+
     // Convert minutes to seconds for UptimeRobot
     let intervalSeconds = intervalMinutes * 60;
 

@@ -16,6 +16,8 @@ interface Service {
   region: string;
   status: string;
   type: string;
+  url:string
+
 }
 
 interface Log {
@@ -85,6 +87,36 @@ const ListServices: React.FC<RenderDashboardProps> = ({ isDarkMode }) => {
       console.error('Error fetching logs:', err);
     }
   };
+
+  ///Create a monitor for the given render service
+  const handleCreateMonitor = async (app:any) => {
+  try {
+    console.log(app)
+    alert(app)
+    const res = await fetch(`${BackendUrl}/monitor/create`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: app.name,
+        url: app.url,  // service URL
+        interval: 300, // enforce 5 minutes (free limit)
+      }),
+    });
+
+    const data = await res.json();
+
+    if (data.stat === "ok") {
+      alert(`Monitor created for ${app.name}`);
+    } else {
+      alert(data.error?.message || "Failed to create monitor");
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong while creating monitor.");
+  }
+};
+
 
   // Fetch metrics
   const fetchMetrics = async (metric: 'cpu' | 'memory', serviceId: string | null = null) => {
@@ -211,26 +243,45 @@ const ListServices: React.FC<RenderDashboardProps> = ({ isDarkMode }) => {
                 <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{app.createdAt ? new Date(app.createdAt).toLocaleDateString() : 'Unknown'}</td>
                 <td className="px-6 py-4 text-gray-600 dark:text-gray-400">{app.region || 'Unknown'}</td>
                 <td className="px-6 py-4">
-                  <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                    {app.status === 'working' ? (
-                      <>
-                        <button className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded" title="Restart" onClick={() => handleAction('restart', app.id)}>
-                          <RefreshCw className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                        </button>
-                        <button className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded" title="Stop" onClick={() => handleAction('suspend', app.id)}>
-                          <StopCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
-                        </button>
-                      </>
-                    ) : (
-                      <button className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded" title="Resume" onClick={() => handleAction('resume', app.id)}>
-                        <Play className="w-4 h-4 text-green-600 dark:text-green-400" />
-                      </button>
-                    )}
-                    <button className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded" title="Deploy" onClick={() => handleDeploy(app.id)}>
-                      <Plus className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                    </button>
-                  </div>
-                </td>
+  <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+
+    {/* Restart / Stop / Resume Buttons */}
+    {app.status === 'working' ? (
+      <>
+        <button className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
+          title="Restart" onClick={() => handleAction('restart', app.id)}>
+          <RefreshCw className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        </button>
+
+        <button className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
+          title="Stop" onClick={() => handleAction('suspend', app.id)}>
+          <StopCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
+        </button>
+      </>
+    ) : (
+      <button className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
+        title="Resume" onClick={() => handleAction('resume', app.id)}>
+        <Play className="w-4 h-4 text-green-600 dark:text-green-400" />
+      </button>
+    )}
+
+    {/* Deploy Button */}
+    <button className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
+      title="Deploy" onClick={() => handleDeploy(app.id)}>
+      <Plus className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+    </button>
+
+    {/* Create UptimeRobot Monitor Button */}
+    <button
+      className="p-2 hover:bg-gray-200 dark:hover:bg-gray-600 rounded"
+      title="Create Monitor"
+      onClick={() => handleCreateMonitor(app)}
+    >
+      <Activity className="w-4 h-4 text-green-500" />
+    </button>
+
+  </div>
+</td>
               </tr>
             ))}
           </tbody>

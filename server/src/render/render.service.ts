@@ -73,27 +73,40 @@ export class RenderService {
 
     try {
       const resp = await client.get('/services');
+      console.log(resp.data.serviceDetails)
       const items: any[] = resp.data; // raw array
 
       const formatted = items.map((item) => {
-        const svc = item.service ?? item;
+  const svc = item.service ?? item;
 
-        return {
-          id: this.safeField(svc, ['id'], 'unknown'),
-          name: this.safeField(svc, ['name'], 'unknown'),
-          createdAt: this.safeField(svc, ['createdAt'], null),
-          region: this.safeField(
-            svc,
-            ['serviceDetails', 'region'],
-            this.safeField(svc, ['service', 'serviceDetails', 'region'], 'Unknown'),
-          ),
-          type: this.safeField(svc, ['type'], 'unknown'),
-          suspended: svc.suspended ?? false,
-          not_suspended: svc.not_suspended ?? false,
-          status: this.getServiceStatus(item),
-          raw: svc,
-        };
-      });
+  // Extract URL based on service type
+  let url = null;
+
+  if (svc.serviceDetails) {
+    if (svc.serviceDetails.url) {
+      url = svc.serviceDetails.url; // Web services
+    } else if (svc.serviceDetails.publishUrl) {
+      url = svc.serviceDetails.publishUrl; // Static sites
+    }
+  }
+
+  return {
+    id: this.safeField(svc, ['id'], 'unknown'),
+    name: this.safeField(svc, ['name'], 'unknown'),
+    createdAt: this.safeField(svc, ['createdAt'], null),
+    region: this.safeField(
+      svc,
+      ['serviceDetails', 'region'],
+      this.safeField(svc, ['service', 'serviceDetails', 'region'], 'Unknown'),
+    ),
+    type: this.safeField(svc, ['type'], 'unknown'),
+    suspended: svc.suspended ?? false,
+    not_suspended: svc.not_suspended ?? false,
+    status: this.getServiceStatus(item),
+    url: url, 
+    raw: svc,
+  };
+});
 
       const working = formatted.filter((s) => s.status === 'working');
       const stopped = formatted.filter((s) => s.status === 'stopped');
