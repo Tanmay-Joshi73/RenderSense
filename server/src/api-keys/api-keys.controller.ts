@@ -14,6 +14,8 @@ export class ApiKeysController {
       const Response=this.apiKeysService.InsertKey(apiKey,email)
       return Response
   }
+  @Post('/setUptime')
+  
   @Get()
   random():any{
     return "Random stuff"

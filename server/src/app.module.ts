@@ -17,6 +17,7 @@ import { application } from 'express';
 import {join} from 'path'
 import { TestResolver } from './test/test.resolver';
 import { RenderModule } from './render/render.module';
+import { MonitorModule } from './monitor/monitor.module';
 @Module({
   imports: [
   ConfigModule.forRoot({
@@ -42,6 +43,7 @@ TypeOrmModule.forRoot({
   UserModule,
   ApiKeysModule,
   RenderModule,
+  MonitorModule,
   // GraphQLModule.forRoot<ApolloDriverConfig>({
       // driver:ApolloDriver,
       // autoSchemaFile: join(process.cwd(), 'src/schema.gql'),

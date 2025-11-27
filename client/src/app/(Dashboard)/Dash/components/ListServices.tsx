@@ -35,7 +35,7 @@ const ListServices: React.FC<RenderDashboardProps> = ({ isDarkMode }) => {
 
   const BackendUrl = 'http://localhost:5000';
   const RENDER_API_KEY = "rnd_h9grLtY0Z98yZXOuH1cUb2FSqVRb";
-
+  const UptimeRObotAPIKey='u3084781-f8637905a333e32da7917b31'
   // Normalize backend statuses
   const normalizeStatus = (status: string) => {
     if (status === 'not_suspended') return 'working';

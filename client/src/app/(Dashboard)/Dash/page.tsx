@@ -5,6 +5,7 @@ import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, R
 import ListServices from './components/ListServices';
 import { div } from 'framer-motion/client';
 import {RenderKeys} from './components/renderKey';
+import UptimeRobot from './components/RenderUptime';
 // Mock Data
 const mockOverviewStats = {
   totalServices: 12,
@@ -231,85 +232,7 @@ type Status = 'Running' | 'Building' | 'Crashed' | 'Up' | 'Down';
     </div>
   );
 
-  //Render Services
  
-  // const renderUptime = () => (
-  //   <div className="space-y-6">
-  //     <div className="flex justify-between items-center">
-  //       <div className="flex gap-2">
-  //         {['all', 'up', 'down'].map(filter => (
-  //           <button
-  //             key={filter}
-  //             onClick={() => setUptimeFilter(filter)}
-  //             className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-  //               uptimeFilter === filter
-  //                 ? 'bg-cyan-600 text-white'
-  //                 : 'bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600'
-  //             }`}
-  //           >
-  //             {filter.charAt(0).toUpperCase() + filter.slice(1)}
-  //           </button>
-  //         ))}
-  //       </div>
-  //       <button className="flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-700 text-white rounded-lg transition-colors">
-  //         <Plus className="w-4 h-4" />
-  //         Add Monitor
-  //       </button>
-  //     </div>
-
-  //     <div className={`rounded-2xl shadow-md overflow-hidden ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-  //       <div className="overflow-x-auto">
-  //         <table className="w-full">
-  //           <thead className={`${isDarkMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
-  //             <tr>
-  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Monitor Name</th>
-  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">URL</th>
-  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Uptime %</th>
-  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Response Time</th>
-  //               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Last Downtime</th>
-  //             </tr>
-  //           </thead>
-  //           <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-  //             {filteredMonitors.map(monitor => (
-  //               <tr key={monitor.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-  //                 <td className="px-6 py-4 whitespace-nowrap font-medium">{monitor.name}</td>
-  //                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{monitor.url}</td>
-  //                 <td className="px-6 py-4 whitespace-nowrap">
-  //                   <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusBadge(monitor.status)}`}>
-  //                     {monitor.status}
-  //                   </span>
-  //                 </td>
-  //                 <td className="px-6 py-4 whitespace-nowrap">{monitor.uptime}%</td>
-  //                 <td className="px-6 py-4 whitespace-nowrap">{monitor.responseTime || 'N/A'} ms</td>
-  //                 <td className="px-6 py-4 whitespace-nowrap text-gray-500">{monitor.lastDowntime}</td>
-  //               </tr>
-  //             ))}
-  //           </tbody>
-  //         </table>
-  //       </div>
-  //     </div>
-
-  //     <div className={`rounded-2xl shadow-md p-6 ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-  //       <h3 className="text-lg font-semibold mb-4">Response Time Trend</h3>
-  //       <ResponsiveContainer width="100%" height={250}>
-  //         <LineChart data={mockCpuData.slice(-12).map(d => ({ ...d, response: Math.floor(Math.random() * 200) + 100 }))}>
-  //           <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? '#374151' : '#e5e7eb'} />
-  //           <XAxis dataKey="time" stroke={isDarkMode ? '#9ca3af' : '#6b7280'} />
-  //           <YAxis stroke={isDarkMode ? '#9ca3af' : '#6b7280'} />
-  //           <Tooltip 
-  //             contentStyle={{ 
-  //               backgroundColor: isDarkMode ? '#1f2937' : '#ffffff',
-  //               border: `1px solid ${isDarkMode ? '#374151' : '#e5e7eb'}`,
-  //               borderRadius: '8px'
-  //             }}
-  //           />
-  //           <Line type="monotone" dataKey="response" stroke="#10b981" strokeWidth={2} dot={false} />
-  //         </LineChart>
-  //       </ResponsiveContainer>
-  //     </div>
-  //   </div>
-  // );
 
   const renderPerformance = () => (
     <div className="space-y-6">
@@ -549,7 +472,7 @@ type Status = 'Running' | 'Building' | 'Crashed' | 'Up' | 'Down';
       <main className="ml-64 pt-16 p-8">
         {activeSection === 'overview' && renderOverview()}
         {activeSection === 'render' && <ListServices isDarkMode={isDarkMode} />}   //This will be in the next file where for the perfect readibility
-        {/* {activeSection === 'uptime' && renderUptime()} */}
+        {activeSection === 'uptime' && <UptimeRobot />}
         {activeSection === 'performance' && renderPerformance()}
         {activeSection === 'keys' && <RenderKeys />}
         {activeSection === 'logs' && renderLogs()}

@@ -145,7 +145,10 @@ export class RenderService {
     const client = this.client(apiKey);
     try {
       // POST /v1/services/{serviceId}/restart
+      // console.log(client)
       const resp = await client.post(`/services/${serviceId}/restart`);
+      
+      console.log(resp.statusText)   
       return { Status: true, Message: 'Restart triggered', data: resp.data };
     } catch (err: any) {
       if (err?.response?.status === 401) return { Status: false, Message: 'Invalid API key' };
